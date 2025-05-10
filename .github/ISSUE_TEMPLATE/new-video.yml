@@ -1,0 +1,57 @@
+name: New Video Submission
+description: Submit a new educational video
+title: "[NEW VIDEO]: "
+labels: ["new-content", "video"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a new video! Please fill out the information below.
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: The title of the video
+      placeholder: "AI in the Classroom"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A short description of the video (1-2 sentences)
+      placeholder: "This video explores how to effectively integrate AI tools in K-12 classrooms."
+    validations:
+      required: true
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Comma-separated list of tags (e.g., education,elementary,ai-basics)
+      placeholder: "education,classroom-integration,elementary"
+    validations:
+      required: true
+  - type: input
+    id: youtube_link
+    attributes:
+      label: YouTube Link
+      description: Link to the YouTube video
+      placeholder: "https://www.youtube.com/watch?v=videoId"
+    validations:
+      required: true
+  - type: input
+    id: filename
+    attributes:
+      label: Filename
+      description: Kebab-case filename without extension (e.g., ai-in-classroom)
+      placeholder: "ai-in-classroom"
+    validations:
+      required: true
+  - type: textarea
+    id: key_topics
+    attributes:
+      label: Key Topics
+      description: List the key topics covered in the video
+      placeholder: "- Topic 1\n- Topic 2\n- Topic 3"
+    validations:
+      required: true

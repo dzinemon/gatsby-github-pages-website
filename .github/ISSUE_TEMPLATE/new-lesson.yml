@@ -1,0 +1,89 @@
+name: New Lesson Submission
+description: Submit a new educational lesson
+title: "[NEW LESSON]: "
+labels: ["new-content", "lesson"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a new lesson! Please fill out the information below.
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: The title of the lesson
+      placeholder: "Using AI for Writing Feedback"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A short description of the lesson (1-2 sentences)
+      placeholder: "This lesson teaches educators how to leverage AI tools for providing effective writing feedback."
+    validations:
+      required: true
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Comma-separated list of tags (e.g., writing,feedback,assessment)
+      placeholder: "writing,feedback,assessment,english"
+    validations:
+      required: true
+  - type: input
+    id: youtube_link
+    attributes:
+      label: YouTube Link
+      description: Link to a video for this lesson (if available)
+      placeholder: "https://www.youtube.com/watch?v=videoId"
+    validations:
+      required: false
+  - type: input
+    id: slide_link
+    attributes:
+      label: Slide Link
+      description: Link to presentation slides (if available)
+      placeholder: "https://docs.google.com/presentation/d/slideId/edit"
+    validations:
+      required: false
+  - type: input
+    id: filename
+    attributes:
+      label: Filename
+      description: Kebab-case filename without extension (e.g., ai-writing-feedback)
+      placeholder: "ai-writing-feedback"
+    validations:
+      required: true
+  - type: textarea
+    id: overview
+    attributes:
+      label: Lesson Overview
+      description: Provide an overview of the lesson
+      placeholder: "This lesson introduces educators to AI-powered approaches for providing timely, detailed feedback on student writing assignments."
+    validations:
+      required: true
+  - type: textarea
+    id: quiz_questions
+    attributes:
+      label: Quiz Questions
+      description: Include any quiz questions for this lesson
+      placeholder: "1. Question 1\n   - A) Answer option\n   - B) Answer option\n   - C) Answer option\n   - D) Answer option\n\n2. Question 2\n   - A) Answer option\n   - B) Answer option\n   - C) Answer option\n   - D) Answer option"
+    validations:
+      required: false
+  - type: textarea
+    id: resources
+    attributes:
+      label: Additional Resources
+      description: List any additional resources for this lesson
+      placeholder: "- [Resource 1](https://example.com/resource1)\n- [Resource 2](https://example.com/resource2)"
+    validations:
+      required: false
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Notes
+      description: Provide implementation notes for teachers
+      placeholder: "When implementing this lesson, consider the following..."
+    validations:
+      required: false
