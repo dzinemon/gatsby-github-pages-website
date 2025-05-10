@@ -211,7 +211,9 @@ const IndexPage: React.FC<PageProps<HomePageData>> = ({ data }) => {
           leverage AI in their teaching practice.
         </p>
         <a 
-          href="#" 
+          href="https://github.com/dzinemon/gatsby-github-pages-website/issues/new/choose" 
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
         >
           Submit Your Resource
