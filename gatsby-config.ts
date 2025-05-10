@@ -9,6 +9,8 @@ const config: GatsbyConfig = {
   // If you use VSCode you can also use the GraphQL plugin
   // Learn more at: https://gatsby.dev/graphql-typegen
   graphqlTypegen: true,
+  // Prefix for GitHub Pages deployment
+  pathPrefix: "/gatsby-ghp",
   plugins: ["gatsby-plugin-postcss", "gatsby-plugin-image", "gatsby-plugin-sitemap", "gatsby-transformer-remark", "gatsby-plugin-sharp", "gatsby-transformer-sharp", {
     resolve: 'gatsby-source-filesystem',
     options: {
@@ -23,6 +25,27 @@ const config: GatsbyConfig = {
       "path": "./src/pages/"
     },
     __key: "pages"
+  }, {
+    resolve: 'gatsby-source-filesystem',
+    options: {
+      "name": "tools",
+      "path": "./src/content/tools/"
+    },
+    __key: "tools"
+  }, {
+    resolve: 'gatsby-source-filesystem',
+    options: {
+      "name": "videos",
+      "path": "./src/content/videos/"
+    },
+    __key: "videos"
+  }, {
+    resolve: 'gatsby-source-filesystem',
+    options: {
+      "name": "lessons",
+      "path": "./src/content/lessons/"
+    },
+    __key: "lessons"
   }]
 };
 
