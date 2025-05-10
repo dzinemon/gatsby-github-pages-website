@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { graphql, Link } from "gatsby";
 import type { HeadFC, PageProps } from "gatsby";
+import { FaVideo, FaCalendarAlt, FaTag, FaHome } from "react-icons/fa";
 
 interface VideosPageData {
   allMarkdownRemark: {
@@ -74,35 +75,51 @@ const VideosPage: React.FC<PageProps<VideosPageData>> = ({ data }) => {
       <nav className="flex mb-4 text-sm" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-1">
           <li>
-            <Link to="/" className="text-blue-600 hover:underline">Home</Link>
+            <Link to="/" className="text-blue-600 hover:underline flex items-center">
+              <FaHome className="mr-1" />
+              <span>Home</span>
+            </Link>
           </li>
           <li className="flex items-center">
             <span className="mx-1">/</span>
-            <span className="text-gray-500">Videos</span>
+            <span className="text-gray-500 flex items-center">
+              <FaVideo className="mr-1" />
+              <span>Videos</span>
+            </span>
           </li>
         </ol>
       </nav>
       
-      <h1 className="text-3xl font-bold mb-8">Educational Videos</h1>
+      <header className="p-4 bg-slate-50 rounded-xl mb-8 space-y-4">
+        <h1 className="text-3xl lg:text-5xl font-bold flex items-center">
+          Video Resources
+        </h1>
+        <p className="text-lg text-gray-600">
+          Browse our collection of educational videos on AI in education
+        </p>
+      </header>
       
       <div className="flex flex-col md:flex-row gap-8">
         {/* Filter by tags - Left sticky column */}
         <div className="md:w-1/4 mb-6 md:mb-0">
           <div className="sticky top-8">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Filter by subject area
-            </label>
+            <div className="flex items-center mb-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Filter by tag
+              </label>
+            </div>
             <div className="flex flex-wrap gap-2">
               {allTags.map(tag => (
                 <button
                   key={tag}
                   onClick={() => toggleTag(tag)}
-                  className={`px-3 py-2 rounded-full text-sm ${
+                  className={`px-3 py-2 rounded-full text-sm flex items-center ${
                     selectedTags.includes(tag)
                       ? "bg-blue-600 text-white"
                       : "bg-blue-100 text-blue-800 hover:bg-blue-200"
                   }`}
                 >
+                  <FaTag className="mr-1" size={10} />
                   {tag}
                 </button>
               ))}
@@ -138,7 +155,7 @@ const VideosPage: React.FC<PageProps<VideosPageData>> = ({ data }) => {
           
           {/* Display filtered videos */}
           {filteredVideos.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredVideos.map((video) => {
                 const youtubeEmbedId = getYoutubeEmbedId(video.frontmatter.youtubeLink);
                 return (
@@ -162,13 +179,18 @@ const VideosPage: React.FC<PageProps<VideosPageData>> = ({ data }) => {
                         </Link>
                       </h3>
                       <p className="text-gray-600 mb-4">{video.frontmatter.description}</p>
+                      <div className="flex items-center text-sm text-gray-500 mb-4">
+                        <FaCalendarAlt className="mr-1" />
+                        <span>{video.frontmatter.date}</span>
+                      </div>
                       <div className="flex flex-wrap gap-2 mt-4">
                         {video.frontmatter.tags.map((tag) => (
                           <Link 
                             key={tag} 
                             to={`/tags/${tag}`}
-                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
+                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs flex items-center"
                           >
+                            <FaTag className="mr-1" size={10} />
                             {tag}
                           </Link>
                         ))}

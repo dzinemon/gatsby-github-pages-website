@@ -1,6 +1,7 @@
 import React from "react";
 import { graphql, Link } from "gatsby";
 import type { HeadFC, PageProps } from "gatsby";
+import { FaHome, FaBook, FaTag, FaCalendarAlt, FaArrowLeft, FaYoutube, FaFilePowerpoint } from "react-icons/fa";
 
 interface LessonPageContext {
   id: string;
@@ -52,11 +53,17 @@ const LessonTemplate: React.FC<PageProps<LessonPageData, LessonPageContext>> = (
       <nav className="flex mb-4 text-sm" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-1">
           <li>
-            <Link to="/" className="text-blue-600 hover:underline">Home</Link>
+            <Link to="/" className="text-blue-600 hover:underline flex items-center">
+              <FaHome className="mr-1" />
+              <span>Home</span>
+            </Link>
           </li>
           <li className="flex items-center">
             <span className="mx-1">/</span>
-            <Link to="/lessons" className="text-blue-600 hover:underline">Lessons</Link>
+            <Link to="/lessons" className="text-blue-600 hover:underline flex items-center">
+              <FaBook className="mr-1" />
+              <span>Lessons</span>
+            </Link>
           </li>
           <li className="flex items-center">
             <span className="mx-1">/</span>
@@ -65,19 +72,41 @@ const LessonTemplate: React.FC<PageProps<LessonPageData, LessonPageContext>> = (
         </ol>
       </nav>
       
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{frontmatter.title}</h1>
-        <p className="text-lg text-gray-600 mb-4">{frontmatter.description}</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {frontmatter.tags.map((tag) => (
-            <Link 
-              key={tag} 
-              to={`/tags/${tag}`}
-              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-            >
-              {tag}
-            </Link>
-          ))}
+      <header className="p-4 bg-slate-50 rounded-xl mb-8 space-y-4">
+        <h1 className="text-3xl lg:text-5xl font-bold">{frontmatter.title}</h1>
+        <p className="text-lg text-gray-600">{frontmatter.description}</p>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center text-gray-600">
+            <FaCalendarAlt className="mr-2" />
+            <span>{frontmatter.date}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {frontmatter.tags.map((tag) => (
+              <Link 
+                key={tag} 
+                to={`/tags/${tag}`}
+                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center"
+              >
+                <FaTag className="mr-1" size={12} />
+                {tag}
+              </Link>
+            ))}
+          </div>
+        </div>
+        
+        <div className="flex gap-4 mt-4">
+          {frontmatter.youtubeLink && (
+            <a href={frontmatter.youtubeLink} target="_blank" rel="noopener noreferrer" className="bg-red-600 text-white px-3 py-2 rounded-md flex items-center text-sm hover:bg-red-700">
+              <FaYoutube className="mr-2" />
+              Watch Video
+            </a>
+          )}
+          {frontmatter.slideLink && (
+            <a href={frontmatter.slideLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-3 py-2 rounded-md flex items-center text-sm hover:bg-blue-700">
+              <FaFilePowerpoint className="mr-2" />
+              View Slides
+            </a>
+          )}
         </div>
       </header>
 
@@ -117,10 +146,17 @@ const LessonTemplate: React.FC<PageProps<LessonPageData, LessonPageContext>> = (
       <div className="mb-8">
         <h2 className="text-xl font-bold mb-4">Lesson Content & Quiz</h2>
         <article 
-          className="prose lg:prose-xl max-w-none"
+          className="prose lg:prose-lg max-w-none"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
+
+      <footer className="mt-8">
+        <Link to="/lessons" className="text-blue-600 hover:underline flex items-center w-fit">
+          <FaArrowLeft className="mr-2" />
+          <span>Back to all lessons</span>
+        </Link>
+      </footer>
     </main>
   );
 };

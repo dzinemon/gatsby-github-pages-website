@@ -1,6 +1,7 @@
 import React from "react";
 import { graphql, Link } from "gatsby";
 import type { HeadFC, PageProps } from "gatsby";
+import { FaHome, FaTag, FaTools, FaVideo, FaBook } from "react-icons/fa";
 
 interface TagPageContext {
   tag: string;
@@ -8,6 +9,20 @@ interface TagPageContext {
 
 interface TagPageData {
   tools: {
+    nodes: {
+      id: string;
+      frontmatter: {
+        title: string;
+        description: string;
+        tags: string[];
+        date: string;
+      };
+      fields: {
+        slug: string;
+      };
+    }[];
+  };
+  lessons: {
     nodes: {
       id: string;
       frontmatter: {
@@ -39,18 +54,24 @@ interface TagPageData {
 
 const TagTemplate: React.FC<PageProps<TagPageData, TagPageContext>> = ({ data, pageContext }) => {
   const { tag } = pageContext;
-  const { tools, videos } = data;
+  const { tools, lessons, videos } = data;
 
   return (
     <main className="container mx-auto px-4 py-8">
       <nav className="flex mb-4 text-sm" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-1">
           <li>
-            <Link to="/" className="text-blue-600 hover:underline">Home</Link>
+            <Link to="/" className="text-blue-600 hover:underline flex items-center">
+              <FaHome className="mr-1" />
+              <span>Home</span>
+            </Link>
           </li>
           <li className="flex items-center">
             <span className="mx-1">/</span>
-            <Link to="/tags" className="text-blue-600 hover:underline">Tags</Link>
+            <Link to="/tags" className="text-blue-600 hover:underline flex items-center">
+              <FaTag className="mr-1" />
+              <span>Tags</span>
+            </Link>
           </li>
           <li className="flex items-center">
             <span className="mx-1">/</span>
@@ -58,11 +79,22 @@ const TagTemplate: React.FC<PageProps<TagPageData, TagPageContext>> = ({ data, p
           </li>
         </ol>
       </nav>
-      <h1 className="text-3xl font-bold mb-8">Content tagged with: <span className="text-blue-600">{tag}</span></h1>
+      <header className="p-4 bg-slate-50 rounded-xl mb-8 space-y-4">
+        <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg">
+          <FaTag className="mr-2" />
+          <h1 className="font-bold">{tag}</h1>
+        </div>
+        <p className="text-lg text-gray-600">
+          Browse all content tagged with "{tag}"
+        </p>
+      </header>
       
       {/* Tools Section */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-4">Tools</h2>
+        <div className="flex items-center mb-4">
+          <FaTools className="mr-2 text-blue-600" />
+          <h2 className="text-2xl font-bold">Tools</h2>
+        </div>
         {tools.nodes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tools.nodes.map((tool) => (
@@ -94,9 +126,49 @@ const TagTemplate: React.FC<PageProps<TagPageData, TagPageContext>> = ({ data, p
         )}
       </section>
       
+      {/* Lessons Section */}
+      <section className="mb-12">
+        <div className="flex items-center mb-4">
+          <FaBook className="mr-2 text-blue-600" />
+          <h2 className="text-2xl font-bold">Lessons</h2>
+        </div>
+        {lessons.nodes.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {lessons.nodes.map((lesson) => (
+              <div key={lesson.id} className="border rounded-lg overflow-hidden shadow-md">
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">
+                    <Link to={lesson.fields.slug} className="text-blue-600 hover:underline">
+                      {lesson.frontmatter.title}
+                    </Link>
+                  </h3>
+                  <p className="text-gray-600 mb-4">{lesson.frontmatter.description}</p>
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {lesson.frontmatter.tags.map((tag) => (
+                      <Link 
+                        key={tag} 
+                        to={`/tags/${tag}`}
+                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
+                      >
+                        {tag}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No lessons found with this tag.</p>
+        )}
+      </section>
+      
       {/* Videos Section */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-4">Videos</h2>
+        <div className="flex items-center mb-4">
+          <FaVideo className="mr-2 text-blue-600" />
+          <h2 className="text-2xl font-bold">Videos</h2>
+        </div>
         {videos.nodes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {videos.nodes.map((video) => (
@@ -142,6 +214,26 @@ export const query = graphql`
     tools: allMarkdownRemark(
       filter: {
         fileAbsolutePath: { regex: "/content/tools/" }
+        frontmatter: { tags: { in: [$tag] } }
+      }
+      sort: { frontmatter: { date: DESC } }
+    ) {
+      nodes {
+        id
+        fields {
+          slug
+        }
+        frontmatter {
+          title
+          description
+          tags
+          date(formatString: "MMMM DD, YYYY")
+        }
+      }
+    }
+    lessons: allMarkdownRemark(
+      filter: {
+        fileAbsolutePath: { regex: "/content/lessons/" }
         frontmatter: { tags: { in: [$tag] } }
       }
       sort: { frontmatter: { date: DESC } }

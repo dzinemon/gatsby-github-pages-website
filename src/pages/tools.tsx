@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { graphql, Link } from "gatsby";
 import type { HeadFC, PageProps } from "gatsby";
+import { FaTools, FaHome, FaTag, FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 
 interface ToolsPageData {
   allMarkdownRemark: {
@@ -67,35 +68,51 @@ const ToolsPage: React.FC<PageProps<ToolsPageData>> = ({ data }) => {
       <nav className="flex mb-4 text-sm" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-1">
           <li>
-            <Link to="/" className="text-blue-600 hover:underline">Home</Link>
+            <Link to="/" className="text-blue-600 hover:underline flex items-center">
+              <FaHome className="mr-1" />
+              <span>Home</span>
+            </Link>
           </li>
           <li className="flex items-center">
             <span className="mx-1">/</span>
-            <span className="text-gray-500">Tools</span>
+            <span className="text-gray-500 flex items-center">
+              <FaTools className="mr-1" />
+              <span>Tools</span>
+            </span>
           </li>
         </ol>
       </nav>
       
-      <h1 className="text-3xl font-bold mb-8">AI-Enhanced Teaching Tools</h1>
+      <header className="p-4 bg-slate-50 rounded-xl mb-8 space-y-4">
+        <h1 className="text-3xl lg:text-5xl font-bold flex items-center">
+          AI Educational Tools
+        </h1>
+        <p className="text-lg text-gray-600">
+          Browse our collection of AI tools for educators
+        </p>
+      </header>
       
       <div className="flex flex-col md:flex-row gap-8">
         {/* Filter by tags - Left sticky column */}
         <div className="md:w-1/4 mb-6 md:mb-0">
           <div className="sticky top-8">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Filter by subject area
-            </label>
+            <div className="flex items-center mb-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Filter by tag
+              </label>
+            </div>
             <div className="flex flex-wrap gap-2">
               {allTags.map(tag => (
                 <button
                   key={tag}
                   onClick={() => toggleTag(tag)}
-                  className={`px-3 py-2 rounded-full text-sm ${
+                  className={`px-3 py-2 rounded-full text-sm flex items-center ${
                     selectedTags.includes(tag)
                       ? "bg-blue-600 text-white"
                       : "bg-blue-100 text-blue-800 hover:bg-blue-200"
                   }`}
                 >
+                  <FaTag className="mr-1" size={10} />
                   {tag}
                 </button>
               ))}
@@ -116,9 +133,11 @@ const ToolsPage: React.FC<PageProps<ToolsPageData>> = ({ data }) => {
         <div className="md:w-3/4">
           {/* Search input */}
           <div className="mb-6">
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
-              Search by title or description
-            </label>
+            <div className="flex items-center mb-2">
+              <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+                Search by title or description
+              </label>
+            </div>
             <input
               type="text"
               id="search"
@@ -131,18 +150,9 @@ const ToolsPage: React.FC<PageProps<ToolsPageData>> = ({ data }) => {
           
           {/* Display filtered tools */}
           {filteredTools.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredTools.map((tool) => (
-                <div key={tool.id} className="border rounded-lg overflow-hidden shadow-md">
-                  {tool.frontmatter.thumbnailUrl && (
-                    <div className="aspect-w-16 aspect-h-9">
-                      <img
-                        src={tool.frontmatter.thumbnailUrl}
-                        alt={tool.frontmatter.title}
-                        className="w-full h-48 object-cover"
-                      />
-                    </div>
-                  )}
+                <div key={tool.id} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2">
                       <Link to={tool.fields.slug} className="text-blue-600 hover:underline">
@@ -150,13 +160,33 @@ const ToolsPage: React.FC<PageProps<ToolsPageData>> = ({ data }) => {
                       </Link>
                     </h3>
                     <p className="text-gray-600 mb-4">{tool.frontmatter.description}</p>
+                    
+                    {/* External links */}
+                    <div className="flex gap-2 mb-4 flex-wrap">
+                      {tool.frontmatter.github && (
+                        <a href={tool.frontmatter.github} target="_blank" rel="noopener noreferrer" 
+                          className="bg-gray-800 text-white px-3 py-1 rounded text-sm hover:bg-gray-900 flex items-center">
+                          <FaGithub className="mr-1" />
+                          GitHub
+                        </a>
+                      )}
+                      {tool.frontmatter.link && (
+                        <a href={tool.frontmatter.link} target="_blank" rel="noopener noreferrer" 
+                          className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 flex items-center">
+                          <FaExternalLinkAlt className="mr-1" size={10} />
+                          Visit Tool
+                        </a>
+                      )}
+                    </div>
+                    
                     <div className="flex flex-wrap gap-2 mt-4">
                       {tool.frontmatter.tags.map((tag) => (
                         <Link 
                           key={tag} 
                           to={`/tags/${tag}`}
-                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
+                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs flex items-center"
                         >
+                          <FaTag className="mr-1" size={10} />
                           {tag}
                         </Link>
                       ))}

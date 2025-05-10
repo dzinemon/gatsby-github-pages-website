@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { graphql, Link } from "gatsby";
 import type { HeadFC, PageProps } from "gatsby";
+import { FaBook, FaCalendarAlt, FaTag, FaHome, FaYoutube, FaFilePowerpoint } from "react-icons/fa";
 
 interface LessonsPageData {
   allMarkdownRemark: {
@@ -11,6 +12,7 @@ interface LessonsPageData {
         description: string;
         tags: string[];
         youtubeLink: string;
+        slideLink?: string;
         date: string;
       };
       fields: {
@@ -74,35 +76,51 @@ const LessonsPage: React.FC<PageProps<LessonsPageData>> = ({ data }) => {
       <nav className="flex mb-4 text-sm" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-1">
           <li>
-            <Link to="/" className="text-blue-600 hover:underline">Home</Link>
+            <Link to="/" className="text-blue-600 hover:underline flex items-center">
+              <FaHome className="mr-1" />
+              <span>Home</span>
+            </Link>
           </li>
           <li className="flex items-center">
             <span className="mx-1">/</span>
-            <span className="text-gray-500">Lessons</span>
+            <span className="text-gray-500 flex items-center">
+              <FaBook className="mr-1" />
+              <span>Lessons</span>
+            </span>
           </li>
         </ol>
       </nav>
       
-      <h1 className="text-3xl font-bold mb-8">AI-Enhanced Lessons</h1>
+      <header className="p-4 bg-slate-50 rounded-xl mb-8 space-y-4">
+        <h1 className="text-3xl lg:text-5xl font-bold flex items-center">
+          Educational Lessons
+        </h1>
+        <p className="text-lg text-gray-600">
+          Browse our collection of lesson plans and educational resources on AI in education
+        </p>
+      </header>
       
       <div className="flex flex-col md:flex-row gap-8">
         {/* Filter by tags - Left sticky column */}
         <div className="md:w-1/4 mb-6 md:mb-0">
           <div className="sticky top-8">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Filter by subject area
-            </label>
+            <div className="flex items-center mb-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Filter by tag
+              </label>
+            </div>
             <div className="flex flex-wrap gap-2">
               {allTags.map(tag => (
                 <button
                   key={tag}
                   onClick={() => toggleTag(tag)}
-                  className={`px-3 py-2 rounded-full text-sm ${
+                  className={`px-3 py-2 rounded-full text-sm flex items-center ${
                     selectedTags.includes(tag)
                       ? "bg-blue-600 text-white"
                       : "bg-blue-100 text-blue-800 hover:bg-blue-200"
                   }`}
                 >
+                  <FaTag className="mr-1" size={10} />
                   {tag}
                 </button>
               ))}
@@ -123,9 +141,11 @@ const LessonsPage: React.FC<PageProps<LessonsPageData>> = ({ data }) => {
         <div className="md:w-3/4">
           {/* Search input */}
           <div className="mb-6">
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
-              Search by title or description
-            </label>
+            <div className="flex items-center mb-2">
+              <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+                Search by title or description
+              </label>
+            </div>
             <input
               type="text"
               id="search"
@@ -138,45 +158,54 @@ const LessonsPage: React.FC<PageProps<LessonsPageData>> = ({ data }) => {
           
           {/* Display filtered lessons */}
           {filteredLessons.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredLessons.map((lesson) => {
-                const youtubeEmbedId = getYoutubeEmbedId(lesson.frontmatter.youtubeLink);
-                return (
-                  <div key={lesson.id} className="border rounded-lg overflow-hidden shadow-md">
-                    {youtubeEmbedId && (
-                      <div className="aspect-w-16 aspect-h-9">
-                        <iframe
-                          className="w-full h-48"
-                          src={`https://www.youtube.com/embed/${youtubeEmbedId}`}
-                          title={lesson.frontmatter.title}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          frameBorder="0"
-                        ></iframe>
-                      </div>
-                    )}
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2">
-                        <Link to={lesson.fields.slug} className="text-blue-600 hover:underline">
-                          {lesson.frontmatter.title}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredLessons.map((lesson) => (
+                <div key={lesson.id} className="border rounded-lg overflow-hidden shadow-md">
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">
+                      <Link to={lesson.fields.slug} className="text-blue-600 hover:underline">
+                        {lesson.frontmatter.title}
+                      </Link>
+                    </h3>
+                    <p className="text-gray-600 mb-4">{lesson.frontmatter.description}</p>
+                    <div className="flex items-center text-sm text-gray-500 mb-4">
+                      <FaCalendarAlt className="mr-1" />
+                      <span>{lesson.frontmatter.date}</span>
+                    </div>
+                    
+                    {/* External links */}
+                    <div className="flex gap-2 mb-4 flex-wrap">
+                      {lesson.frontmatter.youtubeLink && (
+                        <a href={lesson.frontmatter.youtubeLink} target="_blank" rel="noopener noreferrer" 
+                          className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 flex items-center">
+                          <FaYoutube className="mr-1" />
+                          Watch Video
+                        </a>
+                      )}
+                      {lesson.frontmatter.slideLink && (
+                        <a href={lesson.frontmatter.slideLink} target="_blank" rel="noopener noreferrer" 
+                          className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 flex items-center">
+                          <FaFilePowerpoint className="mr-1" />
+                          View Slides
+                        </a>
+                      )}
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {lesson.frontmatter.tags.map((tag) => (
+                        <Link 
+                          key={tag} 
+                          to={`/tags/${tag}`}
+                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs flex items-center"
+                        >
+                          <FaTag className="mr-1" size={10} />
+                          {tag}
                         </Link>
-                      </h3>
-                      <p className="text-gray-600 mb-4">{lesson.frontmatter.description}</p>
-                      <div className="flex flex-wrap gap-2 mt-4">
-                        {lesson.frontmatter.tags.map((tag) => (
-                          <Link 
-                            key={tag} 
-                            to={`/tags/${tag}`}
-                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
-                          >
-                            {tag}
-                          </Link>
-                        ))}
-                      </div>
+                      ))}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-8">
