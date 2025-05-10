@@ -1,7 +1,15 @@
 import React from "react";
 import { graphql, Link } from "gatsby";
-import type { HeadFC, PageProps } from "gatsby";
-import { FaHome, FaTag, FaTools, FaVideo, FaBook } from "react-icons/fa";
+import type { PageProps, HeadFC } from "gatsby";
+import { FaTags, FaHome, FaChevronRight } from "react-icons/fa";
+
+// Import shared components
+import Breadcrumb from "../components/layout/Breadcrumb";
+import PageHeader from "../components/layout/PageHeader";
+import LessonCard from "../components/cards/LessonCard";
+import ToolCard from "../components/cards/ToolCard";
+import VideoCard from "../components/cards/VideoCard";
+import ContentSection from "../components/layout/ContentSection";
 
 interface TagPageContext {
   tag: string;
@@ -15,6 +23,7 @@ interface TagPageData {
         title: string;
         description: string;
         tags: string[];
+        github?: string;
         date: string;
       };
       fields: {
@@ -29,6 +38,8 @@ interface TagPageData {
         title: string;
         description: string;
         tags: string[];
+        youtubeLink?: string;
+        slideLink?: string;
         date: string;
       };
       fields: {
@@ -43,6 +54,7 @@ interface TagPageData {
         title: string;
         description: string;
         tags: string[];
+        youtubeLink?: string;
         date: string;
       };
       fields: {
@@ -56,155 +68,95 @@ const TagTemplate: React.FC<PageProps<TagPageData, TagPageContext>> = ({ data, p
   const { tag } = pageContext;
   const { tools, lessons, videos } = data;
 
+  // Define breadcrumb items
+  const breadcrumbItems = [
+    { to: "/", label: "Home", icon: FaHome },
+    { to: "/tags", label: "Tags", icon: FaTags },
+    { label: tag }
+  ];
+
+  // Get content counts for each type
+  const lessonCount = lessons.nodes.length;
+  const toolCount = tools.nodes.length;
+  const videoCount = videos.nodes.length;
+  const totalCount = lessonCount + toolCount + videoCount;
+
   return (
     <main className="container mx-auto px-4 py-8">
-      <nav className="flex mb-4 text-sm" aria-label="Breadcrumb">
-        <ol className="flex items-center space-x-1">
-          <li>
-            <Link to="/" className="text-blue-600 hover:underline flex items-center">
-              <FaHome className="mr-1" />
-              <span>Home</span>
-            </Link>
-          </li>
-          <li className="flex items-center">
-            <span className="mx-1">/</span>
-            <Link to="/tags" className="text-blue-600 hover:underline flex items-center">
-              <FaTag className="mr-1" />
-              <span>Tags</span>
-            </Link>
-          </li>
-          <li className="flex items-center">
-            <span className="mx-1">/</span>
-            <span className="text-gray-500">{tag}</span>
-          </li>
-        </ol>
-      </nav>
-      <header className="p-4 bg-slate-50 rounded-xl mb-8 space-y-4">
-        <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg">
-          <FaTag className="mr-2" />
-          <h1 className="font-bold">{tag}</h1>
-        </div>
-        <p className="text-lg text-gray-600">
-          Browse all content tagged with "{tag}"
-        </p>
-      </header>
+      <Breadcrumb items={breadcrumbItems} />
       
-      {/* Tools Section */}
-      <section className="mb-12">
-        <div className="flex items-center mb-4">
-          <FaTools className="mr-2 text-blue-600" />
-          <h2 className="text-2xl font-bold">Tools</h2>
-        </div>
-        {tools.nodes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.nodes.map((tool) => (
-              <div key={tool.id} className="border rounded-lg overflow-hidden shadow-md">
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">
-                    <Link to={tool.fields.slug} className="text-blue-600 hover:underline">
-                      {tool.frontmatter.title}
-                    </Link>
-                  </h3>
-                  <p className="text-gray-600 mb-4">{tool.frontmatter.description}</p>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {tool.frontmatter.tags.map((tag) => (
-                      <Link 
-                        key={tag} 
-                        to={`/tags/${tag}`}
-                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
-                      >
-                        {tag}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No tools found with this tag.</p>
-        )}
-      </section>
-      
-      {/* Lessons Section */}
-      <section className="mb-12">
-        <div className="flex items-center mb-4">
-          <FaBook className="mr-2 text-blue-600" />
-          <h2 className="text-2xl font-bold">Lessons</h2>
-        </div>
-        {lessons.nodes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {lessons.nodes.map((lesson) => (
-              <div key={lesson.id} className="border rounded-lg overflow-hidden shadow-md">
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">
-                    <Link to={lesson.fields.slug} className="text-blue-600 hover:underline">
-                      {lesson.frontmatter.title}
-                    </Link>
-                  </h3>
-                  <p className="text-gray-600 mb-4">{lesson.frontmatter.description}</p>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {lesson.frontmatter.tags.map((tag) => (
-                      <Link 
-                        key={tag} 
-                        to={`/tags/${tag}`}
-                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
-                      >
-                        {tag}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No lessons found with this tag.</p>
-        )}
-      </section>
-      
-      {/* Videos Section */}
-      <section className="mb-12">
-        <div className="flex items-center mb-4">
-          <FaVideo className="mr-2 text-blue-600" />
-          <h2 className="text-2xl font-bold">Videos</h2>
-        </div>
-        {videos.nodes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videos.nodes.map((video) => (
-              <div key={video.id} className="border rounded-lg overflow-hidden shadow-md">
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">
-                    <Link to={video.fields.slug} className="text-blue-600 hover:underline">
-                      {video.frontmatter.title}
-                    </Link>
-                  </h3>
-                  <p className="text-gray-600 mb-4">{video.frontmatter.description}</p>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {video.frontmatter.tags.map((tag) => (
-                      <Link 
-                        key={tag} 
-                        to={`/tags/${tag}`}
-                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
-                      >
-                        {tag}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No videos found with this tag.</p>
-        )}
-      </section>
-      
-      <footer className="mt-8">
-        <Link to="/tags" className="text-blue-600 hover:underline">
-          &larr; All Tags
+      <PageHeader
+        title={`${tag} Content`}
+        description={`Found ${totalCount} items tagged with "${tag}"`}
+        icon={<FaTags />}
+      >
+        <Link 
+          to="/tags"
+          className="inline-flex items-center text-blue-600 hover:text-blue-800"
+        >
+          <FaChevronRight className="mr-1 text-xs" />
+          View all tags
         </Link>
-      </footer>
+      </PageHeader>
+
+      {/* Display content sections by type */}
+      {lessonCount > 0 && (
+        <ContentSection title="Lessons" count={lessonCount}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {lessons.nodes.map((lesson) => (
+              <LessonCard
+                key={lesson.id}
+                id={lesson.id}
+                title={lesson.frontmatter.title}
+                description={lesson.frontmatter.description}
+                date={lesson.frontmatter.date}
+                slug={lesson.fields.slug}
+                tags={lesson.frontmatter.tags}
+                youtubeLink={lesson.frontmatter.youtubeLink}
+                slideLink={lesson.frontmatter.slideLink}
+              />
+            ))}
+          </div>
+        </ContentSection>
+      )}
+
+      {toolCount > 0 && (
+        <ContentSection title="Tools" count={toolCount}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {tools.nodes.map((tool) => (
+              <ToolCard
+                key={tool.id}
+                id={tool.id}
+                title={tool.frontmatter.title}
+                description={tool.frontmatter.description}
+                date={tool.frontmatter.date}
+                slug={tool.fields.slug}
+                tags={tool.frontmatter.tags}
+                github={tool.frontmatter.github}
+              />
+            ))}
+          </div>
+        </ContentSection>
+      )}
+
+      {videoCount > 0 && (
+        <ContentSection title="Videos" count={videoCount}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {videos.nodes.map((video) => (
+              <VideoCard
+                key={video.id}
+                id={video.id}
+                title={video.frontmatter.title}
+                description={video.frontmatter.description}
+                date={video.frontmatter.date}
+                slug={video.fields.slug}
+                tags={video.frontmatter.tags}
+                youtubeLink={video.frontmatter.youtubeLink}
+              />
+            ))}
+          </div>
+        </ContentSection>
+      )}
     </main>
   );
 };
@@ -227,6 +179,7 @@ export const query = graphql`
           title
           description
           tags
+          github
           date(formatString: "MMMM DD, YYYY")
         }
       }
@@ -247,6 +200,8 @@ export const query = graphql`
           title
           description
           tags
+          youtubeLink
+          slideLink
           date(formatString: "MMMM DD, YYYY")
         }
       }
@@ -267,6 +222,7 @@ export const query = graphql`
           title
           description
           tags
+          youtubeLink
           date(formatString: "MMMM DD, YYYY")
         }
       }
@@ -274,6 +230,6 @@ export const query = graphql`
   }
 `;
 
-export const Head: HeadFC<{}, TagPageContext> = ({ pageContext }) => <title>Content Tagged: {pageContext.tag}</title>;
+export const Head: HeadFC<TagPageData, TagPageContext> = ({ pageContext }) => <title>Content Tagged: {pageContext.tag}</title>;
 
 export default TagTemplate;
